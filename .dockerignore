@@ -6,3 +6,4 @@ spec
 .git
 .env
 docker-compose.yml
+data

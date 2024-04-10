@@ -5,8 +5,8 @@
 (必要なのは、 `public/css/*.css` と `public.js/*.js` )
 
 ```sh
-$ npm install
-$ npm run production
+$ yarn
+$ NODE_OPTIONS=--openssl-legacy-provider npm run production
 ```
 
 ## build docker image
