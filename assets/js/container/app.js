@@ -13,6 +13,7 @@ import {DELETE_ITEM, UPDATE_MEMO} from '../component/data_column';
 import Setting, {UPDATE_SETTING} from '../component/setting';
 import {SUBMIT_PUSHBULLET} from '../component/pushbullet_setting';
 import {SUBMIT_IFTTT} from '../component/ifttt_setting';
+import {SUBMIT_GENERIC_WEBHOOK} from '../component/generic_webhook_setting';
 
 export default class App extends Flux {
 	constructor(...args) {
@@ -108,6 +109,7 @@ export default class App extends Flux {
 					let form = new FormData();
 					form.append('pushbullet', token);
 					form.append('ifttt', state.setting.ifttt);
+					form.append('generic_webhook', state.setting.generic_webhook_url);
 					form.append('mail', '');
 					fetch('/' + state.user + '/setting', {method: 'POST', body: form}).
 					then((res) => res.json()).
@@ -126,6 +128,26 @@ export default class App extends Flux {
 					let form = new FormData();
 					form.append('pushbullet', state.setting.pushbullet);
 					form.append('ifttt', key);
+					form.append('generic_webhook', state.setting.generic_webhook_url);
+					form.append('mail', '');
+					fetch('/' + state.user + '/setting', {method: 'POST', body: form}).
+					then((res) => res.json()).
+					then((json) => {
+						state.setting = json;
+						return resolve(state);
+					}).
+					catch(err => alert(err));
+				});
+			});
+		});
+
+		this.on(SUBMIT_GENERIC_WEBHOOK, (url) => {
+			this.update((state) => {
+				return new Promise((resolve, reject) => {
+					let form = new FormData();
+					form.append('pushbullet', state.setting.pushbullet);
+					form.append('ifttt', state.setting.ifttt);
+					form.append('generic_webhook_url', url);
 					form.append('mail', '');
 					fetch('/' + state.user + '/setting', {method: 'POST', body: form}).
 					then((res) => res.json()).

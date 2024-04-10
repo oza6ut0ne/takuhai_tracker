@@ -141,6 +141,10 @@ module TakuhaiTracker::Worker
 				send_ifttt_notice(setting.ifttt, service_name, item, body)
 				done += 1
 			end
+			if setting.generic_webhook_url && !setting.generic_webhook_url.empty?
+				send_generic_webhook_notice(setting.generic_webhook_url, service_name, item, body)
+				done += 1
+			end
 		end
 		if done == 0
 			logger.debug "   => not send with bad setting"
@@ -171,6 +175,16 @@ module TakuhaiTracker::Worker
 			logger.debug "   => send notice via ifttt webhook"
 			ifttt = IftttWebhook.new(token)
 			ifttt.post("#{service_name} #{item.key}", body)
+		rescue StandardError => e
+			logger.error "failed sending notice: #{e.class}:#{e} #{item.user_id}/#{item.key}"
+		end
+	end
+
+	def self.send_generic_webhook_notice(url, service_name, item, body)
+		begin
+			logger.debug "   => send notice via generic webhook"
+			generic_webhook = GenericWebhook.new(url)
+			generic_webhook.post("#{service_name} #{item.key}", body)
 		rescue StandardError => e
 			logger.error "failed sending notice: #{e.class}:#{e} #{item.user_id}/#{item.key}"
 		end
