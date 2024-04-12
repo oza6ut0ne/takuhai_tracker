@@ -5,6 +5,7 @@ Bundler.require
 require_relative 'models/item'
 require_relative 'models/setting'
 require_relative 'lib/ifttt_webhook'
+require_relative 'lib/generic_webhook'
 
 module TakuhaiTracker
 	class App < Sinatra::Base
@@ -64,6 +65,7 @@ module TakuhaiTracker
 			else
 				setting['pushbullet_validation'] = pushbullet_valid?(setting.pushbullet)
 				setting['ifttt_validation'] = IftttWebhook.valid_key?(setting.ifttt)
+				setting['generic_webhook_validation'] = GenericWebhook.valid_url?(setting.generic_webhook_url)
 				content_type :json
 				return setting.to_json
 			end
@@ -73,17 +75,20 @@ module TakuhaiTracker
 			user = params[:user]
 			pushbullet = params[:pushbullet]
 			ifttt = params[:ifttt]
+			generic_webhook_url = params[:generic_webhook_url]
 			mail = params[:mail]
 			setting = TakuhaiTracker::Setting.find_or_create_by(user_id: user)
 			setting.update_attributes!(
 				user_id: user,
 				pushbullet: pushbullet,
 				ifttt: ifttt,
+				generic_webhook_url: generic_webhook_url,
 				mail: mail
 			)
 
 			setting['pushbullet_validation'] = pushbullet_valid?(pushbullet)
 			setting['ifttt_validation'] = IftttWebhook.valid_key?(ifttt)
+			setting['generic_webhook_validation'] = GenericWebhook.valid_url?(generic_webhook_url)
 			return setting.to_json
 		end
 

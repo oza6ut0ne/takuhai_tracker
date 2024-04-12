@@ -9,6 +9,7 @@ import {Component} from 'flumpt';
 import {MuiThemeProvider, Card, CardHeader, CardText} from 'material-ui';
 import PushbulletSetting from './pushbullet_setting';
 import IftttSetting from './ifttt_setting';
+import GenericWebhookSetting from './generic_webhook_setting';
 
 export const UPDATE_SETTING = 'update-setting';
 
@@ -54,6 +55,9 @@ export default class Setting extends Component {
 				</CardText>
 				<CardText expandable={true}>
 					<IftttSetting {...this.props}/>
+				</CardText>
+				<CardText expandable={true}>
+					<GenericWebhookSetting {...this.props}/>
 				</CardText>
 			</Card>
 		</MuiThemeProvider>);

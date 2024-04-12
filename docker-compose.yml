@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  takuhai_web:
+    build:
+      context: .
+      dockerfile: misc/docker/web/Dockerfile
+    container_name: takuhai_web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+
+  takuhai_tracker:
+    build:
+      context: .
+      dockerfile: misc/docker/worker/Dockerfile
+    container_name: takuhai_tracker
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:4.4
+    container_name: takuhai_mongodb
+    restart: unless-stopped
+    volumes:
+      - ./data/mongodb:/data/db

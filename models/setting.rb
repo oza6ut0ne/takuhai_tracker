@@ -11,5 +11,6 @@ module TakuhaiTracker
 		field :pushbullet, type: String
 		field :mail, type: String
 		field :ifttt, type: String
+		field :generic_webhook_url, type: String
 	end
 end
