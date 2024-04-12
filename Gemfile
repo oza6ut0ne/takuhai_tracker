@@ -13,7 +13,7 @@ gem 'rack_csrf', require: 'rack/csrf'
 gem 'dotenv'
 gem 'pushbullet_ruby', require: 'pushbullet_ruby'
 
-gem 'takuhai_status', '>= 1.8.7', require: 'takuhai_status'
+gem 'takuhai_status', '>= 1.8.7', git: "https://github.com/oza6ut0ne/takuhai_status.git", branch: "master"
 
 gem 'rake'
 
