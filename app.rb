@@ -97,6 +97,7 @@ module TakuhaiTracker
 			user = params[:user]
 			key = params[:key].gsub(/[^a-zA-Z0-9]/, '')
 			notify = params.include?(:notify)
+			force_notify = params.include?(:force_notify)
 			return 404 unless user.size == 32
 
 			begin
@@ -119,7 +120,7 @@ module TakuhaiTracker
 							state: service.state
 						)
 					end
-					if !exists && notify
+					if force_notify || (!exists && notify)
 						TakuhaiTracker::Worker.check_item(item, force_notify: true)
 					end
 				rescue TakuhaiStatus::Multiple
