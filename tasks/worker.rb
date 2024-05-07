@@ -46,7 +46,7 @@ module TakuhaiTracker::Worker
 		return !!(ENV['DRY_RUN'] =~ /^t/i)
 	end
 
-	def self.check_item(item)
+	def self.check_item(item, force_notify: false)
 		logger.debug "start checking #{item.key}"
 
 		begin
@@ -66,7 +66,7 @@ module TakuhaiTracker::Worker
 			return
 		end
 
-		if item.state != status.state
+		if force_notify || item.state != status.state
 			begin
 				send_notice(item, status) unless dry_run?
 			rescue RetryNext => e

@@ -6,6 +6,7 @@ require_relative 'models/item'
 require_relative 'models/setting'
 require_relative 'lib/ifttt_webhook'
 require_relative 'lib/generic_webhook'
+require_relative 'tasks/worker'
 
 module TakuhaiTracker
 	class App < Sinatra::Base
@@ -95,12 +96,21 @@ module TakuhaiTracker
 		get '/:user/:key' do
 			user = params[:user]
 			key = params[:key].gsub(/[^a-zA-Z0-9]/, '')
+			notify = params.include?(:notify)
 			return 404 unless user.size == 32
 
 			begin
 				begin
 					service = TakuhaiStatus.scan(key, timeout: 5, logger: logger)
-					item = TakuhaiTracker::Item.find_or_create_by(user_id: user, key: key)
+
+					exists = false
+					begin
+						item = TakuhaiTracker::Item.find_by(user_id: user, key: key)
+						exists = true
+					rescue Mongoid::Errors::DocumentNotFound
+						item = TakuhaiTracker::Item.create(user_id: user, key: key)
+					end
+
 					raise Mongoid::Errors::Validations.new(item) unless item.valid?
 					unless service.finish?
 						item.update_attributes!(
@@ -108,6 +118,9 @@ module TakuhaiTracker
 							time: service.time,
 							state: service.state
 						)
+					end
+					if !exists && notify
+						TakuhaiTracker::Worker.check_item(item, force_notify: true)
 					end
 				rescue TakuhaiStatus::Multiple
 					# if found multiple services, wait to finish other services
