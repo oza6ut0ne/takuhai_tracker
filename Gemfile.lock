@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/oza6ut0ne/takuhai_status.git
-  revision: b519f682e50957b7a581c727ce559dcfebadcff4
+  revision: e1081672808b61f1699ebc8e249f7376a13a4619
   branch: master
   specs:
     takuhai_status (1.9.2)
